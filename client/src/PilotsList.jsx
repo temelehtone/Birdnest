@@ -9,7 +9,7 @@ const PilotsList = ({ pilots }) => {
           <th>Name</th>
           <th>Phone</th>
           <th>Email</th>
-          <th>Time</th>
+          <th>Last seen</th>
         </tr>
       </thead>
       <tbody>
@@ -19,7 +19,7 @@ const PilotsList = ({ pilots }) => {
               <td>{pilot.pilot_name}</td>
               <td>{pilot.phone}</td>
               <td>{pilot.email}</td>
-              <td>{pilot.last_seen}</td>
+              <td>{new Date(pilot.last_seen).toLocaleTimeString()}</td>
             </tr>
           ))}
       </tbody>

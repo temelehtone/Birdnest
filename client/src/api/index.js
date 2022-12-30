@@ -6,3 +6,4 @@ const API = axios.create({
 });
 
 export const getDroneData = () => API.get(`/getDroneData`);
+export const getPilots = () => API.get(`/getPilots`);

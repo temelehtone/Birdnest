@@ -1,45 +1,53 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-import { getDroneData } from "./api/index";
-import RadarCanvas from './RadarCanvas';
-import PilotsList from './PilotsList';
+import { useState, useEffect } from "react";
+import "./App.css";
+import { getDroneData, getPilots } from "./api/index";
+import RadarCanvas from "./RadarCanvas";
+import PilotsList from "./PilotsList";
 
 function App() {
   const [drones, setDrones] = useState([]);
   const [pilots, setPilots] = useState([]);
-  
+
   useEffect(() => {
-    setInterval(() => {
-      try {
-        fetchDrones().then(res => {
-          console.log(res)
-          if (res.pilots) {
-            setPilots(res.pilots);
-            setDrones(res.drones);   
-          } else {
-            setDrones(res);
-          }
-        });
-      } catch (error) {
-        console.log(error)
-      }
-    }, 4000)
+    try {
+      fetchPilots().then((res) => {
+        setPilots(res.pilots);
+      });
+      fetchData();
+      setInterval(() => fetchData(), 2000);
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
- 
-async function fetchDrones() {
-  const response = await getDroneData();
-  return response.data; 
-}
+  const fetchData = () => {
+    fetchDrones().then((res) => {
+      if (res.pilots) {
+        setPilots(res.pilots);
+        setDrones(res.drones);
+      } else {
+        setDrones(res);
+      }
+    });
+  };
+
+  async function fetchDrones() {
+    const response = await getDroneData();
+    return response.data;
+  }
+  async function fetchPilots() {
+    const response = await getPilots();
+    return response.data;
+  }
 
   return (
     <div className="App">
-      <div className='app-wrapper'>
+      <div className="app-wrapper">
         <PilotsList pilots={pilots} />
-        <RadarCanvas drones={drones}/>
+        <RadarCanvas drones={drones} />
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

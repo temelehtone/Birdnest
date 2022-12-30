@@ -38,6 +38,7 @@ const MID_COORDS = {
   y: 250000,
 };
 const VIOLATION_RADIUS = 100000;
+const TIMEOUT_IN_MS = 600 * 1000; // 10 minutes
 
 app.get("/getDroneData", cors(corsOptions), async (req, res) => {
   const fetchOptions = {
@@ -58,13 +59,18 @@ app.get("/getDroneData", cors(corsOptions), async (req, res) => {
 
         if (checkForViolation(drones)) {
           let pilots = await getViolatedPilots();
-          res.json({ drones, pilots: pilots.rows });
+          res.json({ drones, pilots });
         } else {
           res.json(drones);
         }
       });
     });
 });
+
+app.get("/getPilots", cors(corsOptions), async (req, res) => {
+    let pilots = await getViolatedPilots();
+    res.json({ pilots });
+})
 
 const checkForViolation = (drones) => {
   let violated = false;
@@ -85,11 +91,25 @@ const getViolatedPilots = async () => {
   let pilots = [];
   try {
     pilots = await db.query(sql);
-  } catch (error) {
-    console.log("ERROR at getViolatedPilot");
+    pilots = checkPilotTime(pilots.rows);
+  } catch (err) {
+    console.log("ERROR at getViolatedPilot: " + err);
   }
   return pilots;
 };
+
+const checkPilotTime = (pilots) => {
+    for (let i = 0; i < pilots.length; i++) {
+        const pilot = pilots[i];
+        if (new Date().getTime() - new Date(pilot.last_seen).getTime() >= TIMEOUT_IN_MS) {
+            deletePilot(pilot.pilot_id);
+            pilots.splice(i, 1);
+            i--;
+        }
+    }
+    return pilots;
+}
+
 const getViolatedPilot = async (pilotId) => {
   let sql = `SELECT pilot_id FROM pilots WHERE pilot_id = ?;`;
   try {
@@ -107,9 +127,14 @@ const updatePilotData = async (pilotId) => {
   }
 };
 
-const deletePilot = (pilotId) => {
+const deletePilot = async (pilotId) => {
   let sql =
-    "DELETE FROM pilots WHERE `last_seen` &gt; DATE_SUB(NOW(), INTERVAL 10 MINUTE);";
+    "DELETE FROM pilots WHERE pilot_id = ?;";
+    try {
+        await db.query(sql, [pilotId]);
+    } catch (err) {
+        console.log("ERROR at deletePilot: " + err);
+    }
 };
 
 const addViolatedPilot = (serialNumber) => {
