@@ -31,3 +31,8 @@
     background-color: #2f073d;
     color: white;
   }
+
+    .scrollable {
+    max-height: 500px;
+    overflow-y: scroll;
+  }

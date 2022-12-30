@@ -12,7 +12,13 @@ function App() {
     setInterval(() => {
       try {
         fetchDrones().then(res => {
-          setDrones(res);   
+          console.log(res)
+          if (res.pilots) {
+            setPilots(res.pilots);
+            setDrones(res.drones);   
+          } else {
+            setDrones(res);
+          }
         });
       } catch (error) {
         console.log(error)
@@ -29,7 +35,7 @@ async function fetchDrones() {
   return (
     <div className="App">
       <div className='app-wrapper'>
-        <PilotsList />
+        <PilotsList pilots={pilots} />
         <RadarCanvas drones={drones}/>
       </div>
     </div>
