@@ -5,7 +5,6 @@ import { getDroneData } from "./api/index";
 function App() {
   const [drones, setDrones] = useState([]);
   
-  const DRONE_URL = "https://assignments.reaktor.com/birdnest/drones";
   useEffect(() => {
     setInterval(() => {
       try {

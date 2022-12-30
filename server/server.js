@@ -2,6 +2,7 @@ import express, { response } from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
 import xml2js from 'xml2js';
+import sqlite3 from 'sqlite3';
 
 const xmlParser = new xml2js.Parser();
 
@@ -35,3 +36,24 @@ app.get('/getDroneData', cors(corsOptions), async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server listening at http://localhost:${PORT}`);
 });
+
+
+
+// let db = new sqlite3.Database('./mcu.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+//     if (err) {
+//         console.log(err);
+//     }
+    
+// });
+// createTables(db);
+
+// function createTables(newdb) {
+//     newdb.exec(`
+//         create table violated_pilots (
+//             pilot_id int primary key not null,
+//             pilot_name text not null,
+//             phone text not null,
+//             created_at datetime default CURRENT_TIMESTAMP
+//         );`
+//     );
+// }
