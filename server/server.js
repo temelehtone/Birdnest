@@ -36,9 +36,11 @@ app.get('/getDroneData', cors(corsOptions), async (req, res) => {
             if (err) {
                 console.log(err)
             }
-
+            if (!result) {
+                res.json({drones: []});
+            }
             let drones = result['report']['capture'][0]['drone'];
-            if (checkForViolation(drones)) {
+            if (false && checkForViolation(drones)) {
                 let pilots = getViolatedPilots();
                 res.json({drones, pilots })
             } else {

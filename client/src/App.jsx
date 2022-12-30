@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import { getDroneData } from "./api/index";
+import RadarCanvas from './RadarCanvas';
 
 function App() {
   const [drones, setDrones] = useState([]);
@@ -9,13 +10,12 @@ function App() {
     setInterval(() => {
       try {
         fetchDrones().then(res => {
-          setDrones(res.drones);
-          console.log(res);
+          setDrones(res);   
         });
       } catch (error) {
         console.log(error)
       }
-    }, 2000)
+    }, 4000)
   }, []);
 
  
@@ -26,9 +26,8 @@ async function fetchDrones() {
 
   return (
     <div className="App">
-      {drones.map(drone => (
-        <h1>{drone.positionY}</h1>
-      ))}
+      
+      <RadarCanvas drones={drones}/>
     </div>
   )
 }
