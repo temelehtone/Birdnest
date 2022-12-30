@@ -1,0 +1,33 @@
+
+.app-wrapper {
+    display: flex;
+    gap: 20px;
+}
+@media screen and (max-width: 1000px) {
+    .app-wrapper {
+        flex-direction: column;
+    }
+}
+
+#pilots {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    height: min-content;
+    background-color: #600e96;
+  }
+  
+  #pilots td, #pilots th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  #pilots tr:nth-child(even){background-color: #43086b;}
+  
+  #pilots th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #2f073d;
+    color: white;
+  }

@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import { getDroneData } from "./api/index";
 import RadarCanvas from './RadarCanvas';
+import PilotsList from './PilotsList';
 
 function App() {
   const [drones, setDrones] = useState([]);
+  const [pilots, setPilots] = useState([]);
   
   useEffect(() => {
     setInterval(() => {
@@ -26,8 +28,10 @@ async function fetchDrones() {
 
   return (
     <div className="App">
-      
-      <RadarCanvas drones={drones}/>
+      <div className='app-wrapper'>
+        <PilotsList />
+        <RadarCanvas drones={drones}/>
+      </div>
     </div>
   )
 }
