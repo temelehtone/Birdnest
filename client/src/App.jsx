@@ -9,7 +9,8 @@ function App() {
     setInterval(() => {
       try {
         fetchDrones().then(res => {
-          setDrones(res);
+          setDrones(res.drones);
+          console.log(res);
         });
       } catch (error) {
         console.log(error)
