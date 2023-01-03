@@ -3,16 +3,19 @@ import cors from "cors";
 import fetch from "node-fetch";
 import xml2js from "xml2js";
 import sqlite3 from "sqlite3";
+import { config } from "dotenv";
+
+config();
 
 const xmlParser = new xml2js.Parser();
 const SQLITE = sqlite3.verbose();
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.use(cors());
 const corsOptions = {
-  origin: "http://127.0.0.1:5173",
+  origin: process.env.CLIENT_URL || "http://127.0.0.1:5173",
   credentials: true,
 };
 
