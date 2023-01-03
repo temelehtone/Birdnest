@@ -7,6 +7,9 @@
     .app-wrapper {
         flex-direction: column;
     }
+    #pilots th {
+      color: white;
+    }
 }
 
 #pilots {
