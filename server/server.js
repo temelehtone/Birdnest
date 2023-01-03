@@ -37,7 +37,7 @@ const MID_COORDS = {
   x: 250000,
   y: 250000,
 };
-const VIOLATION_RADIUS = 100000;
+const VIOLATION_RADIUS = 100000; // 100m
 const TIMEOUT_IN_MS = 600 * 1000; // 10 minutes
 
 app.get("/getDroneData", cors(corsOptions), async (req, res) => {
@@ -48,12 +48,12 @@ app.get("/getDroneData", cors(corsOptions), async (req, res) => {
     .then((response) => response.text())
     .then((data) => {
       xmlParser.parseString(data, async (err, result) => {
-        if (err) {
+        if (err) { 
           console.log(err);
+          return res.json({ drones: [] });
         }
         if (!result) {
-          res.json({ drones: [] });
-          return;
+          return res.json({ drones: [] });
         }
         let drones = result["report"]["capture"][0]["drone"];
 
@@ -64,13 +64,15 @@ app.get("/getDroneData", cors(corsOptions), async (req, res) => {
           res.json(drones);
         }
       });
+    }).catch(err => {
+      console.log("ERROR at getDroneData: " + err);
     });
 });
 
 app.get("/getPilots", cors(corsOptions), async (req, res) => {
-    let pilots = await getViolatedPilots();
-    res.json({ pilots });
-})
+  let pilots = await getViolatedPilots();
+  res.json({ pilots });
+});
 
 const checkForViolation = (drones) => {
   let violated = false;
@@ -98,17 +100,21 @@ const getViolatedPilots = async () => {
   return pilots;
 };
 
+// Removes pilot if 10 minutes since last violation
 const checkPilotTime = (pilots) => {
-    for (let i = 0; i < pilots.length; i++) {
-        const pilot = pilots[i];
-        if (new Date().getTime() - new Date(pilot.last_seen).getTime() >= TIMEOUT_IN_MS) {
-            deletePilot(pilot.pilot_id);
-            pilots.splice(i, 1);
-            i--;
-        }
+  for (let i = 0; i < pilots.length; i++) {
+    const pilot = pilots[i];
+    if (
+      new Date().getTime() - new Date(pilot.last_seen).getTime() >=
+      TIMEOUT_IN_MS
+    ) {
+      deletePilot(pilot.pilot_id);
+      pilots.splice(i, 1);
+      i--;
     }
-    return pilots;
-}
+  }
+  return pilots;
+};
 
 const getViolatedPilot = async (pilotId) => {
   let sql = `SELECT pilot_id FROM pilots WHERE pilot_id = ?;`;
@@ -128,15 +134,15 @@ const updatePilotData = async (pilotId) => {
 };
 
 const deletePilot = async (pilotId) => {
-  let sql =
-    "DELETE FROM pilots WHERE pilot_id = ?;";
-    try {
-        await db.query(sql, [pilotId]);
-    } catch (err) {
-        console.log("ERROR at deletePilot: " + err);
-    }
+  let sql = "DELETE FROM pilots WHERE pilot_id = ?;";
+  try {
+    await db.query(sql, [pilotId]);
+  } catch (err) {
+    console.log("ERROR at deletePilot: " + err);
+  }
 };
 
+// If pilot already in list, update last_seen, else add pilot to list
 const addViolatedPilot = (serialNumber) => {
   const fetchOptions = {
     method: "GET",
@@ -145,6 +151,7 @@ const addViolatedPilot = (serialNumber) => {
     .then((response) => response.json())
     .then(async (data) => {
       let pilotData = await getViolatedPilot(data.pilotId);
+      
       if (pilotData?.rows?.length > 0) {
         updatePilotData(data.pilotId);
       } else {
@@ -154,9 +161,12 @@ const addViolatedPilot = (serialNumber) => {
         try {
           await db.query(sql, values);
         } catch (err) {
-          console.log("ERROR at: addViolatedPilot" + err);
+          console.log("ERROR at adding pilot: " + err);
         }
       }
+    })
+    .catch((err) => {
+      console.log("ERROR at: addViolatedPilot" + err);
     });
 };
 

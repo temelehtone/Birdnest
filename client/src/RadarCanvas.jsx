@@ -56,7 +56,7 @@ const RadarCanvas = ({ drones }) => {
   const drawDrones = () => {
     ctx.fillStyle = "blue"
     ctx.strokeStyle = "blue";
-    drones.forEach(drone => {
+    drones && drones.forEach(drone => {
         ctx.beginPath();
         ctx.arc(drone.positionX / 1000, drone.positionY / 1000, 5, 0, 2 * Math.PI);
         ctx.fill(); 

@@ -23,10 +23,10 @@ function App() {
   const fetchData = () => {
     fetchDrones().then((res) => {
       if (res.pilots) {
-        setPilots(res.pilots);
-        setDrones(res.drones);
+        setPilots([...res.pilots]);
+        setDrones([...res.drones]);
       } else {
-        setDrones(res);
+        setDrones([...res]);
       }
     });
   };
