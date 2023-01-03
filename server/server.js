@@ -19,6 +19,10 @@ const corsOptions = {
   credentials: true,
 };
 
+app.get('/test', (req, res) => {
+  res.status(200).send("Everything is working!");
+});
+
 let db = new SQLITE.Database("./database.db");
 createTables(db);
 
