@@ -15,7 +15,7 @@ const app = express();
 
 app.use(cors());
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "http://127.0.0.1:5173",
+  origin: "https://birdnest-indol.vercel.app/",
   credentials: true,
 };
 
